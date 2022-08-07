@@ -204,10 +204,5 @@ namespace StoneshardLoader
         {
             LoadThumbnail();
         }
-
-        private void MainForm_Activated(object sender, EventArgs e)
-        {
-            LoadSaveFolders();
-        }
     }
 }
