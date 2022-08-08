@@ -34,5 +34,29 @@ namespace StoneshardLoader.Properties {
                 this["LastSelectFolder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("116")]
+        public int BackupHotkey {
+            get {
+                return ((int)(this["BackupHotkey"]));
+            }
+            set {
+                this["BackupHotkey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("119")]
+        public int LoadHotkey {
+            get {
+                return ((int)(this["LoadHotkey"]));
+            }
+            set {
+                this["LoadHotkey"] = value;
+            }
+        }
     }
 }

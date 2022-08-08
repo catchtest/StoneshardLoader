@@ -1,24 +1,118 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace StoneshardLoader
 {
     public partial class MainForm : Form
     {
-        public MainForm()
-        {
-            InitializeComponent();
-        }
-
         private string BasePath;
         private string[] CharacterFolders;
         private string CharacterPath;
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private static MainForm _instance;
+
+        #region Hook
+        private const int WH_KEYBOARD_LL = 13;
+        private const int WM_KEYDOWN = 0x0100;
+        private static readonly LowLevelKeyboardProc _proc = HookCallback;
+        private static IntPtr _hookID = IntPtr.Zero;
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode,
+            IntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        private static IntPtr SetHook(LowLevelKeyboardProc proc)
+        {
+            using (Process curProcess = Process.GetCurrentProcess())
+            using (ProcessModule curModule = curProcess.MainModule)
+            {
+                return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
+            }
+        }
+
+        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+        private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
+            {
+                int vkCode = Marshal.ReadInt32(lParam);
+                if (vkCode != 0)
+                {
+                    _instance.CheckHotkey((Keys)vkCode);
+                }
+            }
+            return CallNextHookEx(_hookID, nCode, wParam, lParam);
+        }
+        #endregion
+
+        public MainForm()
+        {
+            _instance = this;   // for static function call
+
+            InitializeComponent();
+
+            InitializeDropdown();
+
+            _hookID = SetHook(_proc);
+
+            label3.Parent = picLogo;
+        }
+
+        private void InitializeDropdown()
+        {
+            SetKeyDropdown(cboBackupKey, "BackupHotkey");
+            SetKeyDropdown(cboLoadKey, "LoadHotkey");
+        }
+
+        private void SetKeyDropdown(ComboBox comboBox, string settingKey)
+        {
+            var keys = Enum.GetValues(typeof(Keys)).Cast<Keys>()
+                .Where(x => x == Keys.None || (x >= Keys.F1 && x <= Keys.F12))
+                .ToList();
+
+            comboBox.DataSource = keys;
+            comboBox.SelectedIndex = 0;
+
+            var key = (Keys)Properties.Settings.Default[settingKey];
+            comboBox.SelectedIndex = keys.IndexOf(key);
+
+            comboBox.SelectedIndexChanged += (_sender, _e) =>
+            {
+                Properties.Settings.Default[settingKey] = (int)((ComboBox)_sender).SelectedItem;
+                Properties.Settings.Default.Save();
+            };
+        }
+
+        private void CheckHotkey(Keys key)
+        {
+            if (key == (Keys)cboBackupKey.SelectedItem)
+            {
+                btnBackup.PerformClick();
+            }
+            else if (key == (Keys)cboLoadKey.SelectedItem)
+            {
+                btnLoad.PerformClick();
+            }
+        }
+
+        private void btnBackup_Click(object sender, EventArgs e)
         {
             var sourcePath = Path.Combine(CharacterPath, "exitsave_1");
             if (!Directory.Exists(sourcePath))
@@ -203,6 +297,16 @@ namespace StoneshardLoader
         private void lstSaveFolder_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadThumbnail();
+        }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            UnhookWindowsHookEx(_hookID);
+        }
+
+        private void btnGithub_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://github.com/catchtest/StoneshardLoader");
         }
     }
 }
