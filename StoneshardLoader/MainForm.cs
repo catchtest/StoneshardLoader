@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -117,7 +118,8 @@ namespace StoneshardLoader
             var sourcePath = Path.Combine(CharacterPath, "exitsave_1");
             if (!Directory.Exists(sourcePath))
             {
-                MessageBox.Show("Can't find save folder.", "Error");
+                ShowError("Can't find save folder.");
+                LoadSaveFolders();
                 return;
             }
 
@@ -129,7 +131,8 @@ namespace StoneshardLoader
             Directory.CreateDirectory(targetPath);
 
             CopyDirectory(sourcePath, targetPath);
-            lblMessage.Text = "Save file copied.";
+            ShowInfo("Exitsave backup.");
+            System.Media.SystemSounds.Beep.Play();
             LoadSaveFolders();
         }
 
@@ -146,28 +149,43 @@ namespace StoneshardLoader
             }
         }
 
+        private void ShowInfo(string message)
+        {
+            lblMessage.ForeColor = SystemColors.ControlText;
+            lblMessage.Text = message;
+        }
+
+        private void ShowError(string message)
+        {
+            lblMessage.ForeColor = Color.Red;
+            lblMessage.Text = message;
+        }
+
         private void btnLoad_Click(object sender, EventArgs e)
         {
             var targetPath = Path.Combine(CharacterPath, "exitsave_1");
             if (Directory.Exists(targetPath))
             {
-                MessageBox.Show("Save folder already exists", "Error");
+                ShowError("Exitsave folder already exists.");
+                LoadSaveFolders();
                 return;
             }
 
             var folders = Directory.GetDirectories(CharacterPath, "exitsave_1_*");
             if (!folders.Any())
             {
-                MessageBox.Show("Can't find save path.", "Error");
+                ShowError("Can't find save path.");
+                LoadSaveFolders();
                 return;
             }
 
-            // 取得最後一個
+            // Get last exitsave
             var sourcePath = Path.Combine(CharacterPath, folders.OrderByDescending(x => x).FirstOrDefault());
             Directory.CreateDirectory(targetPath);
             CopyDirectory(sourcePath, targetPath);
 
-            lblMessage.Text = "Save file loaded.";
+            ShowInfo("Exissave loaded.");
+            System.Media.SystemSounds.Asterisk.Play();
             LoadSaveFolders();
         }
 
@@ -178,7 +196,7 @@ namespace StoneshardLoader
 
             if (!Directory.Exists(basePath))
             {
-                MessageBox.Show($"Can't find {basePath}");
+                ShowError($"Can't find {basePath}");
                 Close();
                 return;
             }
@@ -218,7 +236,8 @@ namespace StoneshardLoader
             var folders = Directory.GetDirectories(CharacterPath, "exitsave_1_*");
             if (folders.Count() <= 1)
             {
-                MessageBox.Show("No other folder.", "Info");
+                ShowInfo("No other exitsave folder.");
+                LoadSaveFolders();
                 return;
             }
 
@@ -227,7 +246,7 @@ namespace StoneshardLoader
             {
                 Directory.Delete(folder, true);
             }
-            lblMessage.Text = "Delete successfully.";
+            ShowInfo($"Delete {deleteFolders.Count()} folder(s) successfully.");
             LoadSaveFolders();
         }
 
@@ -246,7 +265,7 @@ namespace StoneshardLoader
             }
             else
             {
-                MessageBox.Show($"Folder {basePath} not found.");
+                ShowError($"Folder {basePath} not found.");
                 cboSave.SelectedIndex = -1;
                 LoadCharacterFolders();
             }
