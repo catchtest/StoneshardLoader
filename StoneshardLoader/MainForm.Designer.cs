@@ -44,8 +44,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.cboBackupKey = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnGithub = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
+            this.lnkGitHub = new System.Windows.Forms.LinkLabel();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picPreview)).BeginInit();
@@ -217,17 +217,6 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Backup";
             // 
-            // btnGithub
-            // 
-            this.btnGithub.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnGithub.Location = new System.Drawing.Point(363, 395);
-            this.btnGithub.Name = "btnGithub";
-            this.btnGithub.Size = new System.Drawing.Size(75, 23);
-            this.btnGithub.TabIndex = 10;
-            this.btnGithub.Text = "GitHub";
-            this.btnGithub.UseVisualStyleBackColor = true;
-            this.btnGithub.Click += new System.EventHandler(this.btnGithub_Click);
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -240,13 +229,24 @@
             this.label3.TabIndex = 11;
             this.label3.Text = "Loader";
             // 
+            // lnkGitHub
+            // 
+            this.lnkGitHub.AutoSize = true;
+            this.lnkGitHub.Location = new System.Drawing.Point(393, 412);
+            this.lnkGitHub.Name = "lnkGitHub";
+            this.lnkGitHub.Size = new System.Drawing.Size(47, 16);
+            this.lnkGitHub.TabIndex = 12;
+            this.lnkGitHub.TabStop = true;
+            this.lnkGitHub.Text = "GitHub";
+            this.lnkGitHub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkGitHub_LinkClicked);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(452, 461);
+            this.Controls.Add(this.lnkGitHub);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.btnGithub);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.picPreview);
             this.Controls.Add(this.lstSaveFolder);
@@ -296,8 +296,8 @@
         private System.Windows.Forms.ComboBox cboLoadKey;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox cboBackupKey;
-        private System.Windows.Forms.Button btnGithub;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.LinkLabel lnkGitHub;
     }
 }
 

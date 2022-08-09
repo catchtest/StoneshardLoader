@@ -74,6 +74,14 @@ namespace StoneshardLoader
             _hookID = SetHook(_proc);
 
             label3.Parent = picLogo;
+
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            ShowError(((Exception)e.ExceptionObject).Message);
+            Console.WriteLine(e.ExceptionObject.ToString());
         }
 
         private void InitializeDropdown()
@@ -123,14 +131,18 @@ namespace StoneshardLoader
                 return;
             }
 
-            var targetPath = Path.Combine(CharacterPath, $"exitsave_1_{DateTime.Now:yyyyMMdd_HHmmss}");
+            var saveFilePath = Path.Combine(sourcePath, "data.sav"); 
+            var date = File.GetLastWriteTime(saveFilePath);
+            var targetPath = Path.Combine(CharacterPath, $"exitsave_1_{date:yyyyMMdd_HHmmss}");
             if (Directory.Exists(targetPath))
             {
-                System.Threading.Thread.Sleep(1000);
+                ShowInfo("Exitsave folder already exists.");
+                return;
             }
-            Directory.CreateDirectory(targetPath);
 
+            Directory.CreateDirectory(targetPath);
             CopyDirectory(sourcePath, targetPath);
+
             ShowInfo("Exitsave backup.");
             System.Media.SystemSounds.Beep.Play();
             LoadSaveFolders();
@@ -323,7 +335,7 @@ namespace StoneshardLoader
             UnhookWindowsHookEx(_hookID);
         }
 
-        private void btnGithub_Click(object sender, EventArgs e)
+        private void lnkGitHub_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("https://github.com/catchtest/StoneshardLoader");
         }
