@@ -84,6 +84,7 @@
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
             this.statusStrip1.Size = new System.Drawing.Size(452, 22);
+            this.statusStrip1.SizingGrip = false;
             this.statusStrip1.TabIndex = 5;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -127,11 +128,13 @@
             this.cboSave.Name = "cboSave";
             this.cboSave.Size = new System.Drawing.Size(208, 24);
             this.cboSave.TabIndex = 0;
+            this.cboSave.DropDown += new System.EventHandler(this.cboSave_DropDown);
             this.cboSave.SelectedIndexChanged += new System.EventHandler(this.cboSave_SelectedIndexChanged);
             // 
             // picLogo
             // 
             this.picLogo.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.picLogo.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picLogo.Dock = System.Windows.Forms.DockStyle.Top;
             this.picLogo.Image = ((System.Drawing.Image)(resources.GetObject("picLogo.Image")));
             this.picLogo.InitialImage = null;
@@ -141,6 +144,7 @@
             this.picLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picLogo.TabIndex = 6;
             this.picLogo.TabStop = false;
+            this.picLogo.Click += new System.EventHandler(this.picLogo_Click);
             // 
             // lstSaveFolder
             // 

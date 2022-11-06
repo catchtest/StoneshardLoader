@@ -234,8 +234,23 @@ namespace StoneshardLoader
         private void LoadCharacterFolders()
         {
             var saveFolders = Directory.GetDirectories(BasePath, "character_*");
-            CharacterFolders = saveFolders.Select(x => Path.GetFileName(x)).ToArray();
-            cboSave.Items.AddRange(CharacterFolders);
+            var currentFolders = saveFolders.Select(x => Path.GetFileName(x)).ToArray();
+            var update = false;
+
+            if (cboSave.Items.Count == 0)
+            {
+                update = true;
+            }
+            else if (!Enumerable.SequenceEqual(currentFolders, CharacterFolders))  // check folder different or not
+            {
+                update = true;
+            }
+            if (update)
+            {
+                CharacterFolders = currentFolders;
+                cboSave.Items.Clear();
+                cboSave.Items.AddRange(CharacterFolders);
+            }
         }
 
         private void btnOpenFolder_Click(object sender, EventArgs e)
@@ -264,7 +279,9 @@ namespace StoneshardLoader
 
         private void cboSave_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var folderName = cboSave.SelectedItem.ToString();
+            var folderName = cboSave.SelectedItem?.ToString();
+            if (folderName == null) { return; }
+
             var basePath = Path.Combine(BasePath, folderName);
 
             if (Directory.Exists(basePath))
@@ -304,6 +321,7 @@ namespace StoneshardLoader
             if (string.IsNullOrEmpty(selectFolder))
             {
                 picPreview.ImageLocation = null;
+                return;
             }
             var previewPath = Path.Combine(CharacterPath, selectFolder, "preview.png");
             if (File.Exists(previewPath))
@@ -338,6 +356,16 @@ namespace StoneshardLoader
         private void lnkGitHub_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("https://github.com/catchtest/StoneshardLoader");
+        }
+
+        private void picLogo_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://store.steampowered.com/app/625960/_/");
+        }
+
+        private void cboSave_DropDown(object sender, EventArgs e)
+        {
+            LoadCharacterFolders();
         }
     }
 }
